@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/sem.h>
 // #include <linux/sem.h>
 #include <sys/types.h>
@@ -6,9 +8,9 @@
 #include <sys/ipc.h>
 
 #define SHMKEY_S 75
-#define SHM_S_SIZE 1024
+#define SHM_S_SIZE 3
 #define SHMKEY_T 100
-#define SHM_T_SIZE 1024
+#define SHM_T_SIZE 3
 #define SEM_KEY 125
 #define S_FULL 0
 #define S_EMPTY 1

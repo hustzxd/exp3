@@ -2,8 +2,7 @@
 
 int semid;
 int shmid_s;
-int *addr_s;
-
+char *addr_s;
 int main()
 {
 	//read file
@@ -22,16 +21,36 @@ int main()
 		printf("in get.c addr get error!\n");
 		exit(1);
 	}
-	int i;
-	for(i=0;i<10;i++){
-		P(semid,S_EMPTY);
-		printf("in get%d\n",i);
-		
-		*addr_s = i;
 
-		V(semid,S_FULL);
-
+	FILE *pf = fopen("a.txt","r");
+	if(pf == NULL){
+		printf("open a.txt error!\n");
+		exit(1);
 	}
-	
+	int i = 0;
+	// char c[SHM_S_SIZE + 1];
+	char c[SHM_S_SIZE];
+	size_t size;
+	// char cc[SHM_S_SIZE];
+	while((size = fread(c,1,sizeof(c),pf))>0){
+		// printf("%s\n", c);
+		i++;
+		P(semid,S_EMPTY);
+		printf("in get%d size = %d ",i,size);
+		// c[size] = '\0';
+		strcpy(addr_s,c);
+		// *addr_s = *c;
+		// strcpy(c,cc);
+		int j;
+		for(j=0;j<SHM_S_SIZE;j++)
+			c[j] = ' ';
+		printf("addr_s = %s\n", addr_s);
+		V(semid,S_FULL);
+	}
+	fclose(pf);
+
+	P(semid,S_EMPTY);
+	*addr_s = NULL;
+	V(semid,S_FULL);
 	return 0;
 }

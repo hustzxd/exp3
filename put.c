@@ -2,7 +2,7 @@
 
 int semid;
 int shmid_t;
-int *addr_t;
+char *addr_t;
 
 int main()
 {
@@ -22,12 +22,22 @@ int main()
 		printf("in put.c addr_t get error!\n");
 		exit(1);
 	}
-	int i;
-	for(i=0;i<10;i++){
+	FILE *pf;
+	pf = fopen("a_cy.txt","w");
+	int i=0;
+	char c[SHM_T_SIZE];
+	while(1){
+		i++;
 		P(semid,T_FULL);
 		printf("in put%d ",i);
-		printf("string = %d\n", *addr_t);
+		printf("addr_t = %s\n", addr_t);
 
+		if(*addr_t == NULL){
+			V(semid,T_EMPTY);
+			break;
+		}
+		strcpy(c,addr_t);
+		fwrite(c,sizeof(char),SHM_T_SIZE,pf);
 		V(semid,T_EMPTY);
 	}
 	return 0;

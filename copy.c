@@ -3,8 +3,8 @@
 int semid;
 int shmid_s;
 int shmid_t;
-int *addr_s;
-int *addr_t;
+char *addr_s;
+char *addr_t;
 
 int main(){
 
@@ -29,18 +29,23 @@ int main(){
 	addr_t = shmat(shmid_t,0,0);
 	int i;
 
-	for(i=0;i<10;i++){
+	while(1){
+		i++;
 		P(semid,S_FULL);
 		P(semid,T_EMPTY);
 
-		printf("in copy%d\n",i);
-		*addr_t = *addr_s;
-
+		printf("in copy%d ",i);
+		// *addr_t = *addr_s;
+		strcpy(addr_t,addr_s);
+		printf("*addr_t is %s\n", addr_t);
+		if(*addr_t == NULL){
+			V(semid,T_FULL);
+			V(semid,S_EMPTY);
+			break;
+		}
 		V(semid,T_FULL);
 		V(semid,S_EMPTY);
 	}
-
-	
 	
 	return 0;
 }
